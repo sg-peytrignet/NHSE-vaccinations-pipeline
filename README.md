@@ -14,36 +14,30 @@ The [NHS England](https://www.england.nhs.uk/statistics/statistical-work-areas/c
 
 - It then checks which files you have already downloaded, so that you only download the most recent files you don't yet have.
 - Then, it cleans each weekly release and appends the datasets into a clean dataset which is saved locally. Because each weekly release is different, the code here standardizes it so that week-on-week statistics can be compiled.
-- Finally, the 'NHSE-vaccinations-markdown.Rmd' file produces an html markdown file with updated visualizations, such as the weekly number of COVID-19 vaccinations by age group and dose.
+- Finally, the 'NHSE-vaccinations-markdown.Rmd' file produces an html markdown file with updated visualizations.
+- For example, it tracks the number of weekly COVID-19 vaccinations by age group and dose.
 
 <img src="exampleviz.PNG" width="627" height="413">
 
 ### Requirements
 
-Software or packages that needs to be installed and and how to install them.
+These scripts were written in R version 4.0.2 and RStudio Version 1.1.383. 
 
-For example:
-These scripts were written in R version (to be added) and RStudio Version 1.1.383. 
-The following R packages (available on CRAN) are needed: 
-* [**tidyverse**](https://www.tidyverse.org/)
+The following packages are needed to run the scripts:
 
-### Getting started
-
-Describe the way in which the code can be used. 
-
-## Useful references
-
+- tidyverse
+- readxl
+- rvest
+- curl
+- lubridate
+- ggthemes
+- scales
+- plotly
 
 ## Authors
 
-* contributor name - [Twitter] - [GitHub]
+* Sebastien Peytrignet, The Health Foundation - [Twitter](https://twitter.com/SebastienPeytr2) - [GitHub](https://github.com/speytrignet-thf)
 
 ## License
 
-This project is licensed under the [MIT License](link to license file).
-
-## Acknowledgments
-
-* Credit anyone whose code was used
-* Inspiration
-* etc
+This project is licensed under the [MIT License](https://github.com/speytrignet-thf/NHSE-vaccinations-pipeline/blob/main/LICENSE).
