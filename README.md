@@ -4,7 +4,7 @@
 
 ## Project Description and Data Source
 
-Since the end December 2020, [NHS England](https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-vaccinations/) publishes weekly data on the number of COVID-19 vaccinations provided by the NHS in England. The code here extracts the most recent data from the website and downloads those files in order to visualize key summary statistics.
+Since the end of December 2020, [NHS England](https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-vaccinations/) publishes weekly data on the number of COVID-19 vaccinations provided it has provided. The code here extracts the most recent data from the website and downloads those files in order to visualize key summary statistics.
 
 ## How does it work?
 
