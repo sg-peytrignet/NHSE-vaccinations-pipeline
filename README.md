@@ -4,7 +4,7 @@
 
 ## Project Description and Data Source
 
-The [NHS England](https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-vaccinations/) dataset contains information on the number of COVID-19 vaccinations provided by the NHS in England, with a new release every week. The code here extracts the most recent data from the website and downloads those files, after checking which files you have already downloaded locally. It also produces a markdown file to visualize key summary statistics.
+Since the end December 2020, [NHS England](https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-vaccinations/) publishes weekly data on the number of COVID-19 vaccinations provided by the NHS in England. The code here extracts the most recent data from the website and downloads those files in order to visualize key summary statistics.
 
 ## How does it work?
 
@@ -12,10 +12,10 @@ The [NHS England](https://www.england.nhs.uk/statistics/statistical-work-areas/c
 
 <img src="weeklydata.PNG" width="395" height="204">
 
-- It then checks which files you have already downloaded, so that you only download the most recent files you don't yet have.
-- Then, it cleans each weekly release and appends the datasets into a clean dataset which is saved locally. Because each weekly release is different, the code here standardizes it so that week-on-week statistics can be compiled.
-- Finally, the 'NHSE-vaccinations-markdown.Rmd' file produces an html markdown file with updated visualizations.
-- For example, it tracks the number of weekly COVID-19 vaccinations by age group and dose.
+- It then checks which files you have already downloaded, so that you only download the most recent files which don't yet have locally.
+- Then, it cleans each weekly release and appends the resulting data frames into a clean dataset, which is saved locally. Because each weekly release is different, the code here standardizes those data frames so that week-on-week statistics can be compiled.
+- Finally, the 'NHSE-vaccinations-markdown.Rmd' file produces an .html markdown file with updated visualizations.
+- For example, it tracks the number of weekly COVID-19 vaccinations by age group and dose. New types of visualizations can be added as new breakdowns are releasted (e.g. according to ethnicity or vaccination priority group).
 
 <img src="exampleviz.PNG" width="627" height="413">
 
