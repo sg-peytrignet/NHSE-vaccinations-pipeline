@@ -10,11 +10,13 @@ The [NHS England](https://www.england.nhs.uk/statistics/statistical-work-areas/c
 
 - The first file, 'NHSE-vaccinations.R', web-scrapes the [NHS England](https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-vaccinations/) page and stores the addresses for all the weekly releases (which are in an .xslx format).
 
-<img src="ndlbanner.png" width="409" height="791">
+<img src="weeklydata.PNG" width="395" height="204">
 
 - It then checks which files you have already downloaded, so that you only download the most recent files you don't yet have.
 - Then, it cleans each weekly release and appends the datasets into a clean dataset which is saved locally. Because each weekly release is different, the code here standardizes it so that week-on-week statistics can be compiled.
 - Finally, the 'NHSE-vaccinations-markdown.Rmd' file produces an html markdown file with updated visualizations, such as the weekly number of COVID-19 vaccinations by age group and dose.
+
+<img src="exampleviz.PNG" width="627" height="413">
 
 ### Requirements
 
