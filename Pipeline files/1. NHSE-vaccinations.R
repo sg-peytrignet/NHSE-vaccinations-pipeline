@@ -181,4 +181,4 @@ clean_data_dose_age <- clean_data_dose_age %>%
   ungroup(.)
 
 #Save data
-fwrite(clean_data_dose_age, file = paste0(rawdataparentdir,"Summary/age_dose_summary.csv"), sep = ",")
+fwrite(clean_data_dose_age, file = paste0(rawdataparentdir,"age_dose_summary.csv"), sep = ",")
