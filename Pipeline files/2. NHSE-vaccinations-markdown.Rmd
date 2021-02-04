@@ -6,7 +6,6 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-
 #Markdown setup
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -36,7 +35,8 @@ chart.data <- filter(age_dose_summary,ageband_bis!="allages") %>%
   mutate(.,ageband_bis=str_replace_all(ageband_bis,"under80","Under 80")) %>%
   mutate(.,ageband_bis=str_replace_all(ageband_bis,"over80","Over 80")) %>%
   mutate(.,dose=str_replace_all(dose,"first","First dose")) %>%
-  mutate(.,dose=str_replace_all(dose,"second","Second dose"))
+  mutate(.,dose=str_replace_all(dose,"second","Second dose")) %>%
+  mutate(.,date=lubridate::ymd(date))
 
 vax_by_age_dose_plot <- ggplot(chart.data,
   aes(fill=dose, y=cumnumber.people, x=date)) +

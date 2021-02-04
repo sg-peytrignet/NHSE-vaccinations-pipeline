@@ -14,7 +14,7 @@ Since the end of December 2020, [NHS England](https://www.england.nhs.uk/statist
 
 - It then checks which files you have already downloaded, so that you only download the most recent files which don't yet have locally.
 - Then, it cleans each weekly release and appends the resulting data frames into a clean dataset, which is saved locally. Because each weekly release is different, the code here standardizes those data frames so that week-on-week statistics can be compiled.
-- Finally, the 'NHSE-vaccinations-markdown.Rmd' file produces an .html markdown file with updated visualizations.
+- Finally, the 'NHSE-vaccinations-markdown.Rmd' file produces an [.html](https://github.com/speytrignet-thf/NHSE-vaccinations-pipeline/blob/main/Pipeline%20files/NHSE-vaccinations-markdown.html) markdown file with updated visualizations.
 - For example, it tracks the number of weekly COVID-19 vaccinations by age group and dose. New types of visualizations can be added as new breakdowns are releasted (e.g. according to ethnicity or vaccination priority group).
 
 <img src="images/exampleviz.PNG" width="627" height="413">

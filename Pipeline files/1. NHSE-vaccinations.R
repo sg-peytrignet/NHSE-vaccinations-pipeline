@@ -10,7 +10,7 @@ rm(list = ls())
 #Today's date
 Sys.Date()
 
-#Directory to save files
+#Directory to save files: replace with your own
 rawdatadir <- "M:/Analytics/NHS England Vaccinations/Weekly/"
 rawdataparentdir <- "M:/Analytics/NHS England Vaccinations/"
 
