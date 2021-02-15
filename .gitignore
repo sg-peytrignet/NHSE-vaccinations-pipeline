@@ -13,6 +13,8 @@
 /Analysis/THF/.*
 
 # History files
+/Pipeline files/Archive/.*
+scratch.R
 .Rhistory
 .Rapp.history
 

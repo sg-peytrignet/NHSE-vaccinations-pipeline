@@ -1,0 +1,190 @@
+---
+title: "Vaccinations dashbaord: NHS England Open Data"
+output: 
+  flexdashboard::flex_dashboard:
+    social: menu
+    source_code: embed 
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+
+#Load packages
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(dplyr,stringr,sp,ggplot2,plyr,data.table,
+               tibble,pbapply,pbmcapply,here,readxl,rvest,
+               downloader,curl,lubridate,hrbrthemes,plotly,
+               ggthemes,scales,rgdal,shiny,leaflet)
+
+#Clean up the global environment
+rm(list = ls())
+
+#Directory to save files
+rawdatadir <- "M:/Analytics/NHS England Vaccinations/Weekly/"
+rawdataparentdir <- "M:/Analytics/NHS England Vaccinations/"
+
+#Load age and region data
+age_region_summary <- fread(paste0(rawdataparentdir,"Summary/age_region_summary.csv"),
+                                 header=TRUE, sep=",", check.names=T) %>%
+  mutate(.,datechar=paste(month.abb[month(date)],
+                           day(date),
+                           year(date),sep=" "))
+
+#Load ethnicity data
+ethn_summary <- fread(paste0(rawdataparentdir,"Summary/ethn_summary.csv"),
+                                 header=TRUE, sep=",", check.names=T) %>%
+  mutate(.,datechar=paste(month.abb[month(date)],
+                           day(date),
+                           year(date),sep=" "))
+
+#Projection codes
+ukgrid = "+init=epsg:27700"
+latlong="+init=epsg:4326"
+
+#Shapefiles
+setwd(paste0(rawdataparentdir,"/Shapefiles"))
+UK_points_shp <- readOGR(dsn="NHS England Regions Centroids",layer="centroids_shp")
+UK_points_shp <- spTransform(UK_points_shp, CRS(latlong))
+
+#Map data
+map_data <- age_region_summary %>%
+  filter(.,dose=="first"&ageband_bis=="allages") %>%
+  filter(.,!(region %in% c("Total","Other"))) %>%
+  select(.,date,datechar,region,rate_pop)
+# %>% reshape2::dcast(., region ~ datechar, value.var="rate_pop")
+
+#Map data points
+map_data_points <- left_join(map_data,UK_points_shp@data,by=c("region"="nhser19nm"))
+map_data_points <- SpatialPointsDataFrame(cbind(map_data_points$long,map_data_points$lat),
+                                          select(map_data_points,datechar,region,rate_pop))
+
+```
+
+Weekly vaccinations by age group and dose
+=======================================================================
+
+### Chart 1
+
+```{r}
+chart.data <- filter(age_region_summary,ageband_bis!="allages"&region=="Total") %>%
+  mutate(.,ageband_bis=str_replace_all(ageband_bis,"under80","Under 80")) %>%
+  mutate(.,ageband_bis=str_replace_all(ageband_bis,"over80","Over 80")) %>%
+  mutate(.,dose=str_replace_all(dose,"first","First dose")) %>%
+  mutate(.,dose=str_replace_all(dose,"second","Second dose")) %>%
+  mutate(.,date=lubridate::ymd(date))
+
+vax_by_age_dose_plot <- ggplot(chart.data,
+  aes(fill=dose, y=cumnumber.people, x=date)) +
+  facet_wrap(~ ageband_bis) +
+  geom_bar(position="stack", stat="identity") +
+  ggtitle("COVID-19 vaccinations") +
+  scale_y_continuous(name=" ", labels = scales::comma) +
+  xlab(" ") +
+  scale_fill_tableau() +
+  theme_economist() +
+  theme(
+    # Hide panel borders and remove grid lines
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    # Change axis line
+    axis.line = element_line(colour = "black"),
+    plot.background = element_rect(fill = "white"),
+    legend.title = element_blank()
+  )
+
+ggplotly(vax_by_age_dose_plot)
+```
+
+Weekly vaccinations by ethnicity
+=======================================================================
+
+### Chart 2
+
+```{r}
+eth_plot_data <- filter(ethn_summary,dose=="first") %>%
+  filter(.,!(ethnicity_small %in% c("Unknown","Total"))) %>%
+  select(.,date,datechar,dose,ethnicity_small,eth_rate)
+
+eth_plot <- eth_plot_data %>%
+  ggplot(aes(x=date, y=eth_rate,
+              color=ethnicity_small)) +
+  geom_line() +
+  scale_color_brewer(palette = "Dark2") +
+  ggtitle("Vacination rate by ethnicity (first dose)") +
+  scale_y_continuous(name="% vaccinated (first dose)") +
+  theme_economist() +
+  xlab(" ") +
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.line = element_line(colour = "black"),
+    plot.background = element_rect(fill = "white"),
+    legend.title = element_blank()
+  )
+  
+ggplotly(eth_plot)
+```
+
+Weekly vaccinations by region
+=======================================================================
+
+### Inline map
+
+```{r}
+shinyApp(
+  ui = fillPage(
+    fillCol(flex = c(NA, 1), 
+      inputPanel(
+        selectInput("week", "Week:", choices =unique(map_data_points$datechar))
+      ),
+      leafletOutput("mymap")
+    )
+  ),
+  
+  server = function(input, output, session) {
+    
+filteredData <- reactive({
+map_data_points[map_data_points$datechar==input$week,]
+    })
+  
+output$mymap <- renderLeaflet({
+  leaflet(map_data_points, options = leafletOptions(zoomControl = FALSE)) %>%
+  addProviderTiles(providers$Stamen.TonerLite) %>%
+  setView(lat=51.5095,lng=-0.1245,zoom = 5)
+  })
+
+observe({
+
+#palette
+pal.region <- colorNumeric(palette = "YlGnBu",domain = filteredData()$rate_pop)
+
+#labels
+labels <- sprintf(
+  "<strong>%s</strong><br/>%g percent",
+  filteredData()$region, round(filteredData()$rate_pop,1)
+) %>% lapply(htmltools::HTML)
+
+#reactive map
+leafletProxy("mymap", data = filteredData()) %>%
+      clearControls() %>%
+      clearShapes() %>%
+  addCircleMarkers(radius  = ~15, weight = 1, color = "grey",
+             fillColor = ~pal.region(rate_pop), fillOpacity = 0.7,
+             label = labels,
+             labelOptions = labelOptions(
+               style = list("font-weight" = "normal", padding = "3px 8px"),
+               textsize = "15px",
+               direction = "auto")) %>%
+  addLegend("bottomright", pal = pal.region,
+            values = ~rate_pop,
+            title = "Percentage first dose",
+            labFormat = labelFormat(prefix = "%"),
+            opacity = 1)
+  
+  })
+  },
+  options = list(height = 600)
+)
+```
